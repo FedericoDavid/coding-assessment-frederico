@@ -1,106 +1,47 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
-import axios from "axios";
+import FormSubmitter from "./components/FormSubmitter";
+import FieldModal from "./components/FieldModal";
+import useFormFields from "./hooks/useFormFields";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const FormSubmitter: React.FC = (props) => {
-	const [email, setEmail] = useState<any>("");
-	const [formData, setFormData] = useState<any>({});
-	const [IsSending, setIsSending] = useState<any>(false);
+const App: React.FC = () => {
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [submittedPayload, setSubmittedPayload] = useState<object | null>(null);
 
-	return (
-		<div className="bg-gradient-to-r from-blue-100 to-blue-200 min-h-screen flex items-center justify-center p-4">
-			<div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
-				<h1 className="text-3xl font-bold mb-8 text-center text-gray-800">
-					Form Submission
-				</h1>
-				<form
-					className="space-y-6"
-					onSubmit={(e) => {
-						e.preventDefault();
-						setIsSending(true);
-						try {
-							const response = axios.post(
-								"https://api.example.com/send-email",
-								{
-									to: email,
-									formData: formData,
-								}
-							);
-							console.log("Email sent successfully:", response.data);
-							alert("Form submitted successfully!");
-						} catch (error) {
-							console.log("Error sending email:", error);
-							alert("An error occurred while submitting the form.");
-						}
-					}}
-				>
-					<div className="space-y-2">
-						<label
-							htmlFor="email"
-							className="block text-sm font-medium text-gray-700"
-						>
-							Recipient Email:
-						</label>
-						<input
-							type="email"
-							id="email"
-							value={email}
-							onChange={(e) => setEmail(e.target.value)}
-							required
-							placeholder="Enter email address"
-							className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-						/>
-					</div>
-					<div className="space-y-2">
-						<label
-							htmlFor="name"
-							className="block text-sm font-medium text-gray-700"
-						>
-							Name:
-						</label>
-						<input
-							type="text"
-							id="name"
-							name="name"
-							onChange={(e) => {
-								const { name, value } = e.target;
-								setFormData({ ...formData, [name]: value });
-							}}
-							placeholder="Enter your name"
-							className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-						/>
-					</div>
-					<div className="space-y-2">
-						<label
-							htmlFor="message"
-							className="block text-sm font-medium text-gray-700"
-						>
-							Message:
-						</label>
-						<textarea
-							id="message"
-							name="message"
-							onChange={(e) => {
-								const { name, value } = e.target;
-								setFormData({ ...formData, [name]: value });
-							}}
-							placeholder="Enter your message"
-							className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 h-32 resize-none"
-						></textarea>
-					</div>
-					{!IsSending && (
-						<button
-							type="submit"
-							className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 transition duration-300 ease-in-out text-lg font-semibold"
-						>
-							{IsSending ? "Sending..." : "Submit Form"}
-						</button>
-					)}
-				</form>
-			</div>
-		</div>
-	);
+  const { fields, addField, removeField, updateFieldValue } = useFormFields();
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
+  const handleFormSubmit = (payload: object) => {
+    setSubmittedPayload(payload);
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-r from-blue-100 to-blue-200 flex flex-col items-center justify-start p-4">
+      <div className="w-full max-w-lg p-6 bg-gray-900 rounded-lg shadow-2xl">
+        <FormSubmitter
+          fields={fields}
+          onOpen={openModal}
+          removeField={removeField}
+          updateFieldValue={updateFieldValue}
+          onFormSubmit={handleFormSubmit}
+        />
+      </div>
+      <FieldModal
+        addField={addField}
+        isOpen={isModalOpen}
+        onClose={closeModal}
+      />
+      {submittedPayload && (
+        <div className="mt-6 bg-gray-100 text-black p-4 rounded-lg shadow-md w-full max-w-lg">
+          <h3 className="text-lg font-bold my-2">Submitted Payload:</h3>
+          <pre className="bg-gray-200 p-4 rounded-lg text-black">
+            {JSON.stringify(submittedPayload, null, 2)}
+          </pre>
+        </div>
+      )}
+    </div>
+  );
 };
 
-export default FormSubmitter;
+export default App;
