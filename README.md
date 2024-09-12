@@ -36,3 +36,8 @@ Also, the Form Builder is composed of reusable components such as InputField to 
 - Better User Feedback: Now, we simulate the server response. Adding a real backend or integrating with a service could provide real-world functionality
 - Global Alert/Toast Provider: Adding a toast/alert system maybe could improve the overall user experience by showing status messages throughout the app (using libraries like react-toastify).
 - Enhanced UX: Further improvements, such as tooltips, loading indicators, and more detailed error messaging, could be added to enhance the user experience.
+
+**Evidence:**
+
+<img width="1466" alt="Captura de pantalla 2024-09-12 a la(s) 11 12 02" src="https://github.com/user-attachments/assets/c1872400-89a0-4f24-9ae4-b092f3da44db">
+
